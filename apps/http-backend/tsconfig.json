@@ -1,9 +1,7 @@
-// imported the base typescript configuration from the common package
-// added root and outdir to facilitate build script
 {
-    "extends" : "@repo/typescript-config/base.json",
-    "compilerOptions": {
-        "rootDir": "./src",
-        "outDir": "./dist"
-    }
+"extends" : "@repo/typescript-config/base.json",
+  "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist"
+  }
 }

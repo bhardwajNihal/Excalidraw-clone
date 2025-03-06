@@ -15,7 +15,7 @@
     - add package.json in both the folder by - pnpm init
     - add tsconfig.json and extend it to the base tsconfig.json from packages folder instead of copy   
       pasting the whole boiler plate to avoid code duplication, also not - npx tsc --init.
-    - add "@repo/typescript-config": "workspace:*" (in case of pnpm, just "*" for npm ) as dependency in the package.json of both, and >> pnpm install in the 
+    - add "@repo/typescript-config": "workspace:*" (in case of pnpm,  for npm just add "*") as dependency in the package.json of both, and >> pnpm install in the 
       root folder.
     - in the ws, http backend > in tsconfig.json > add compilerOptions rootdir and outdir
     - Then add the build, dev, and start script to both.
@@ -27,4 +27,16 @@
     - initialize a simple ws instance
 
 7. complete the http routes for signup, signin and room-creation. 
+  - Authmiddlware using jwt.
   - jsonwebtoken for authentication as of now. (cookies becomes complex, currently just focusing on workflow, logics and building muscle memory for building projects using monorepo)
+
+  # Defining common modules:
+    - in packages/common-configs.
+    - configuring env variables, db connection function, auth middleware, etc. >> in one place, exporting them to reuse accross different app.
+    - export them from src/index.ts
+    - configure tsconfig and package.json - add scripts, dependencies, and root and outdir.
+
+    - add the common package as the dependency in the app using it.
+    - run pnpm install in that app directory
+    - import in the file and use, 
+    - import from dist, once the build is done
