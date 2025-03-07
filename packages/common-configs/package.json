@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "exports": {
+    "./config": "./dist/index.js"
+  },
   "scripts": {
     "build": "npx tsc -b",
     "start": "node ./dist/index.ts",
-    "dev" : "pnpm run build && pnpm run start"
+    "dev": "pnpm run build && pnpm run start"
   },
   "keywords": [],
   "author": "",
@@ -15,13 +18,12 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.13.3"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/pg": "^8.11.11",
     "typescript": "^5.8.2"
   }
 }

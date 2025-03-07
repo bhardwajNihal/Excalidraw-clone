@@ -40,3 +40,14 @@
     - run pnpm install in that app directory
     - import in the file and use, 
     - import from dist, once the build is done
+
+  
+8. Adding Db package
+  - will store the schemas and models for the database
+    i. initialize an empty package.json >> add common tsconfig as devdependency
+    ii. initialize tsconfig.json >> extend it the common tsconfig >> pnpm install
+    iii. install prisma
+    iv. add db url to the .env
+    iv. define models >> migrate(npx prisma migrate --name init_schema) >> npx prisma generate -> to generate client.
+    v. export prisma client from scr/index.ts
+    vi. in package.json add exports 
