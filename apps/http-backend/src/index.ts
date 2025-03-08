@@ -1,7 +1,7 @@
 
 import express from 'express';
 import { Request, Response } from 'express';
-import { AuthMiddleware, signupUserSchema, signinUserSchema, createRoomSchema, JWT_SECRET } from "@repo/common-configs/config"
+import { AuthMiddleware, signupUserSchema, createRoomSchema, JWT_SECRET } from "@repo/common-configs/config"
 import { prismaClient } from '@repo/db';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -98,8 +98,50 @@ app.post("/signin", async(req:Request,res:Response)=>{
 
 })
 
-app.post("/chat", (req:Request,res:Response)=>{
-    res.send("chat endpoint!")
+app.post("/chat", AuthMiddleware, async(req:Request,res:Response)=>{
+    
+    const parsedRoomData = createRoomSchema.safeParse(req.body);
+
+    if(!parsedRoomData.success){
+        res.status(403).json({
+            message : "Invalid Input!",
+            error : parsedRoomData.error.message
+        })
+        return;
+    }
+
+    const {name} = req.body;
+
+    //checking if room already exists 
+    const foundRoom = await prismaClient.room.findFirst({
+        where:{
+            slug : name
+        }
+    })
+
+    if(foundRoom){
+        res.status(403).json({
+            message : "Room name already taken!"
+        })
+        return;
+    }
+
+    // extracting userId from the authMiddleware
+    //@ts-ignore
+    const adminId = req.userId
+
+    const roomData = await prismaClient.room.create({
+        data:{
+            slug : name,
+            adminId
+        }
+    })
+
+    res.json({
+        message : "Room created Successfully!",
+        roomId : roomData.id
+    })
+
 })
 
 
