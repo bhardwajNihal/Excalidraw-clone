@@ -1,9 +1,10 @@
 
 import express from 'express';
 import { Request, Response } from 'express';
-import { AuthMiddleware, signupUserSchema, signinUserSchema, createRoomSchema } from "@repo/common-configs/config"
+import { AuthMiddleware, signupUserSchema, signinUserSchema, createRoomSchema, JWT_SECRET } from "@repo/common-configs/config"
 import { prismaClient } from '@repo/db';
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const app = express();
 app.use(express.json())
@@ -61,8 +62,40 @@ app.post("/signup", async(req:Request,res:Response)=>{
 
 })
 
-app.post("/signin", (req:Request,res:Response)=>{
-    res.send("signin endpoint!")
+app.post("/signin", async(req:Request,res:Response)=>{
+    
+    const {email,password} = req.body;
+
+    const foundUser = await prismaClient.user.findFirst({
+        where:{email}
+    })
+
+    if(!foundUser){
+        res.status(403).json({
+            message: "User not found! Please Register!"
+        })
+        return;
+    }
+
+    const checkPassward = await bcrypt.compare(password, foundUser.password);
+
+    if(!checkPassward){
+        res.status(403).json({
+            message: "Incorrect Password!"
+        })
+        return;
+    }
+
+    const token = jwt.sign({
+        userId : foundUser.id
+    }, JWT_SECRET as string)
+
+    res.json({
+        message: "User Signed In!",
+        token: token
+    })
+
+
 })
 
 app.post("/chat", (req:Request,res:Response)=>{
