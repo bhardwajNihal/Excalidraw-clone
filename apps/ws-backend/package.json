@@ -9,10 +9,13 @@
     "dev": "pnpm run build && pnpm run start"
   },
   "dependencies": {
+    "jsonwebtoken": "^9.0.2",
     "ws": "^8.18.1"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*", 
+    "@repo/typescript-config": "workspace:*",
+    "@repo/common-configs" : "workspace:*",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/ws": "^8.5.14"
   },
   "keywords": [],
