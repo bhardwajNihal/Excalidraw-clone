@@ -10,11 +10,12 @@
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
-    "ws": "^8.18.1"
+    "ws": "^8.18.1",
+    "@repo/common-configs" : "workspace:*",
+    "@repo/db" : "workspace:*"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@repo/common-configs" : "workspace:*",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/ws": "^8.5.14"
   },

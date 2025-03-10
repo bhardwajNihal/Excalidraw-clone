@@ -98,7 +98,7 @@ app.post("/signin", async(req:Request,res:Response)=>{
 
 })
 
-app.post("/chat", AuthMiddleware, async(req:Request,res:Response)=>{
+app.post("/create-room", AuthMiddleware, async(req:Request,res:Response)=>{
     
     const parsedRoomData = createRoomSchema.safeParse(req.body);
 
@@ -144,6 +144,20 @@ app.post("/chat", AuthMiddleware, async(req:Request,res:Response)=>{
 
 })
 
+app.get("/chats/:roomId", async(req:Request, res:Response)=>{
+  
+    const roomId = Number(req.params.roomId);
+
+    const chats = await prismaClient.chat.findMany({
+        where: {roomId},
+        orderBy : {id:"desc"},                          // orders the chat in descending order, last added will be displayed 1st
+        take : 50                                      // pagination - takes only 1st 50 chats on 1st load
+    })
+
+    res.json({
+        chats
+    })
+})
 
 async function startServer() {
     await connectToDB();

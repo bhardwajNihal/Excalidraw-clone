@@ -4,6 +4,7 @@
 import { WebSocket, WebSocketServer } from "ws";
 import jwt, { JsonWebTokenError } from 'jsonwebtoken'
 import {JWT_SECRET} from '@repo/common-configs/config'
+import { prismaClient } from "@repo/db";
 
 const wss = new WebSocketServer({port:8080});
 console.log("Websocket Server active on port 8080");
@@ -58,11 +59,22 @@ wss.on('connection', (ws, req) => {
     currentUserSocket : ws
    })
 
-    ws.on('message', (data) => {
+    ws.on('message', async(data) => {
         const parsedData = JSON.parse(data as unknown as string);       // data recieved is in the form of string. But TS doesn't know it, so casting it to unknown and then to string
 
         // Join-room request
         if(parsedData.type == "join-room"){         //data : {"type":"join-room","roomId":1}
+
+            // Check if room exists
+            const findRoom = await prismaClient.room.findFirst({
+                where : {id: parsedData.roomId}
+            })
+            if(!findRoom){
+                ws.send(JSON.stringify({
+                    message : "Room doesn't exists!"
+                }))
+                return;
+            }
             const user = Users.find(user => user.currentUserSocket == ws);
             user?.rooms.push(parsedData.roomId);
             return;
@@ -79,8 +91,21 @@ wss.on('connection', (ws, req) => {
         //Chat request
         if(parsedData.type = "chat"){
             const roomId = parsedData.roomId;
+            const checkRoom = Users.find(user => user.rooms.includes(roomId))
+            if(!checkRoom){
+                ws.send("Join to a room First!")
+            }
             const message = parsedData.message;
 
+            // storing the chat in the database - not the best appraoch but works here(ideally some advanced concepts are used - something called queues, etc)
+            await prismaClient.chat.create({
+                data:{
+                    userId : VerifiedUser,
+                    roomId,
+                    message
+                }
+            })
+            // finally broadcasting the message to every user in the room
             Users.forEach(user => {
                 if(user.rooms.includes(roomId)){
                     user.currentUserSocket.send(JSON.stringify({
