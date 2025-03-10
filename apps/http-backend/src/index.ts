@@ -159,6 +159,25 @@ app.get("/chats/:roomId", async(req:Request, res:Response)=>{
     })
 })
 
+app.get("/room/:slug", async(req:Request, res:Response)=>{
+    const slug = req.params.slug;
+
+    const foundRoom = await prismaClient.room.findFirst({
+        where: {slug}
+    })
+
+    if(!foundRoom){
+        res.status(403).json({
+            message : "No such room Exists!"
+        })
+        return;
+    }
+
+    res.json({
+        foundRoom
+    })
+})
+
 async function startServer() {
     await connectToDB();
     app.listen(3001, ()=>{
