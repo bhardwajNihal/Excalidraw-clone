@@ -32,14 +32,15 @@
 
   # Defining common modules:
     - in packages/common-configs.
-    - configuring env variables, db connection function, auth middleware, etc. >> in one place, exporting them to reuse accross different app.
+    - configuring env variables,common zod schemas, auth middleware, etc. >> in one place, exporting them to reuse accross different app.
     - export them from src/index.ts
     - configure tsconfig and package.json - add scripts, dependencies, and root and outdir.
+    - add export alias in the package.json of the common package - for importing using a specific name.
+    - like - "config" : "./dist/index.js"     ---> good practice to export from the built file
 
     - add the common package as the dependency in the app using it.
     - run pnpm install in that app directory
     - import in the file and use, 
-    - import from dist, once the build is done
 
   
 8. Adding Db package
@@ -47,13 +48,16 @@
     i. initialize an empty package.json >> add common tsconfig as devdependency
     ii. initialize tsconfig.json >> extend it the common tsconfig >> pnpm install
     iii. install prisma
-    iv. add db url to the .env
+    iv. add db url to the .env file added by prisma
     iv. define models >> migrate(npx prisma migrate --name init_schema) >> npx prisma generate -> to generate client.
-    v. export prisma client from scr/index.ts
+    v. export prisma client from scr/index.ts (better making it a singleton client)
     vi. in package.json add exports 
 
-9. Signup, Signin route completed in the http-backend. Tested using postman
-10. Done with the create-room endpoint >> creates a room with the assigned name, assign it adminId
+9. Signup, Signin route completed in the http-backend. Test using postman
+10. Done with the create-room endpoint >> creates a room with the assigned name, assign it adminId.
+    - later added :
+      - /chats/:roomId  --> returns all the chats given a roomId
+      - "/room/:slug"   --> to fetch the room details given the slug
 
 11. Added Token validation in ws layer
   - Token can't be passed in headers, so taken a different approach
@@ -61,9 +65,19 @@
   - extracted token >> later verified it >> if failed - ws.close()
 
 12. Chat logic in the ws endpoint
-  - will take the simple in memory approach for state management.(state management libraries will make the codebase complex)
+  - will take the simple in memory approach for state management.(state management libraries -like redux will make the codebase complex)
   - store the joined user data in a global variable.
-  - on each request - check for the types -> add logic
+  - on each request - check for the types(join,leave,chat request) -> add logic
   - test the endpoints 
 
   ✅Done with the Ws layer - join, leave and chat logic
+    - later get chats, and room details endpoint
+
+
+  ## Moving to the frontend
+
+  13. Done with a rough landing page.
+  14. Signup and signin page.
+  15. basic routing.
+  
+  16. Setting up a canvas. Learnt basic methods.
